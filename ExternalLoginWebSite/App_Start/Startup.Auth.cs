@@ -8,6 +8,7 @@ using Microsoft.Owin.Security.WeChat;
 using Owin;
 using ExternalLoginWebSite.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ExternalLoginWebSite
 {
@@ -51,7 +52,8 @@ namespace ExternalLoginWebSite
             {
                 AppId = "wx58756c727fe48f97",
                 AppSecret = "c827d0497fd1c58c658ef82e459e7b3c",
-                ReturnEndpointPath = @"/Home/WechatCallback"                
+                ReturnEndpointPath = @"/Home/WechatCallback",
+               // Provider = new WeChatAuthenticationProvider() { onAuthenticated = (c) =>  }
             });
 
             // 取消注释以下行可允许使用第三方登录提供程序登录
@@ -72,6 +74,20 @@ namespace ExternalLoginWebSite
             //    ClientId = "",
             //    ClientSecret = ""
             //});
+        }
+    }
+
+    public class YMCWechatAuthenticationProvider : IWeChatAuthenticationProvider
+    {
+        public Task Authenticated(WeChatAuthenticatedContext context)
+        {
+            //cookie
+            throw new NotImplementedException();
+        }
+
+        public Task ReturnEndpoint(WeChatReturnEndpointContext context)
+        {
+            throw new NotImplementedException();
         }
     }
 }
