@@ -43,7 +43,14 @@ namespace Microsoft.Owin.Security.WeChat
         {
             _logger.WriteVerbose("InvokeReturnPath");
 
-            var model = await AuthenticateAsync();
+            var model = await AuthenticateAsync();//Goto:AuthenticateCoreAsync()
+            //Todo@cooper:取不到...回调是有问题的，在用户登陆确认之后
+            //if (model == null)
+            //{
+            //    //_logger.WriteWarning("Invalid return state, unable to redirect.");
+            //    //Response.StatusCode = 500;
+            //    return true;
+            //}
 
             var context = new WeChatReturnEndpointContext(Context, model);
             context.SignInAsAuthenticationType = Options.SignInAsAuthenticationType;
@@ -199,7 +206,7 @@ namespace Microsoft.Owin.Security.WeChat
                         "&redirect_uri=" + Uri.EscapeDataString(redirectUri) +
                         "&scope=" + Uri.EscapeDataString(scope) +
                         "&state=" + Uri.EscapeDataString(state) +
-                        "&response_type=code";
+                        "&response_type=code#wechat_redirect";
 
                 Response.Redirect(authorizationEndpoint);
             }

@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using Microsoft.Owin.Security;
+using System.Text;
+using System.Security.Cryptography;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace Microsoft.Owin.Security.WeChat
 {
@@ -14,7 +18,7 @@ namespace Microsoft.Owin.Security.WeChat
             Caption = "微信账号";
             ReturnEndpointPath = "/signin-wechatconnect";
             AuthenticationMode = AuthenticationMode.Passive;
-            Scope = new List<string> { "get_user_info" };
+            Scope = new List<string> { "snsapi_base", "snsapi_userinfo" };
             BackchannelTimeout = TimeSpan.FromSeconds(60);
         }
 
@@ -44,4 +48,5 @@ namespace Microsoft.Owin.Security.WeChat
 
         public string AppSecret { get; set; }
     }
+
 }
