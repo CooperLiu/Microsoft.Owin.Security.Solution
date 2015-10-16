@@ -141,7 +141,7 @@ packages/*
 !packages/build/
 *.nuspec
 *.nupkg
-nuget.exe
+#nuget.exe
 
 # Windows Azure Build Output
 csx/
