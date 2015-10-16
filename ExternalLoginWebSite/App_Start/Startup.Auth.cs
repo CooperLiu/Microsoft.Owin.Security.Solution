@@ -51,7 +51,7 @@ namespace ExternalLoginWebSite
             {
                 AppId = "wx58756c727fe48f97",
                 AppSecret = "c827d0497fd1c58c658ef82e459e7b3c",
-                ReturnEndpointPath = @"/Account/ExternalLoginCallback"                
+                ReturnEndpointPath = @"/Home/WechatCallback"                
             });
 
             // 取消注释以下行可允许使用第三方登录提供程序登录
