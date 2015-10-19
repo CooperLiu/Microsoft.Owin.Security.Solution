@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Microsoft.Owin.Security.WeChat")]
 [assembly: AssemblyDescription("Middleware that enables an application to support WeChat OAuth 2.0 authentication workflow.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("momy")]
+[assembly: AssemblyCompany("YMC")]
 [assembly: AssemblyProduct("Microsoft.Owin.Security.WeChat")]
 [assembly: AssemblyCopyright("Copyright © YMC 2015")]
 [assembly: AssemblyTrademark("")]
