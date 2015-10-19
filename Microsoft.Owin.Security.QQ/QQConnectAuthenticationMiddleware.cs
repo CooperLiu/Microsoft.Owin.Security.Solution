@@ -41,12 +41,18 @@ namespace Microsoft.Owin.Security.WeChat
             {
                 Options.Provider = new QQConnectAuthenticationProvider();
             }
+
             if (Options.StateDataFormat == null)
             {
                 var dataProtecter = app.CreateDataProtector(
                     typeof(QQConnectAuthenticationMiddleware).FullName,
                     Options.AuthenticationType, "v1");
                 Options.StateDataFormat = new PropertiesDataFormat(dataProtecter);
+            }
+
+            if (String.IsNullOrEmpty(Options.SignInAsAuthenticationType))
+            {
+                Options.SignInAsAuthenticationType = app.GetDefaultSignInAsAuthenticationType();
             }
 
             _httpClient = new HttpClient(ResolveHttpMessageHandler(Options));

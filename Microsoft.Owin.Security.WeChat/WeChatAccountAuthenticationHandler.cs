@@ -59,8 +59,7 @@ namespace Microsoft.Owin.Security.WeChat
 			model.Properties.RedirectUri = null;
 
             await Options.Provider.ReturnEndpoint(context);
-            //if (context.SignInAsAuthenticationType != null && context.Identity != null)
-            if (context.Identity != null)
+            if (context.SignInAsAuthenticationType != null && context.Identity != null)
             {
                 ClaimsIdentity signInIdentity = context.Identity;
                 if (!string.Equals(signInIdentity.AuthenticationType, context.SignInAsAuthenticationType, StringComparison.Ordinal))
@@ -155,10 +154,6 @@ namespace Microsoft.Owin.Security.WeChat
                 await Options.Provider.Authenticated(context);
 
                 context.Properties = properties;
-                Response.Cookies.Append("ExternalCookie", Options.StateDataFormat.Protect(properties));
-
-          
-             
 
                 return new AuthenticationTicket(context.Identity, context.Properties);
             }
@@ -201,7 +196,6 @@ namespace Microsoft.Owin.Security.WeChat
                 // OAuth2 10.12 CSRF
                 GenerateCorrelationId(properties);
 
-                Response.Cookies.Append("_ExternalCookie1", Options.StateDataFormat.Protect(properties));
                 // comma separated
                 string scope = string.Join(",", Options.Scope);
 
