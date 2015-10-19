@@ -16,6 +16,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{B398DE
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExternalLoginWebSite", "ExternalLoginWebSite\ExternalLoginWebSite.csproj", "{DA1EFE14-AFE0-46A4-82D4-2A2EAAE22AD3}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ProjectItems", "ProjectItems", "{0C048324-AC8A-40DB-A01B-56A041FD022D}"
+	ProjectSection(SolutionItems) = preProject
+		ProjectItems\Nuget.bat = ProjectItems\Nuget.bat
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

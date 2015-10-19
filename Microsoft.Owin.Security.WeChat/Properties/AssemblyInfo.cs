@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("momy")]
 [assembly: AssemblyProduct("Microsoft.Owin.Security.WeChat")]
-[assembly: AssemblyCopyright("Copyright © momy 2015")]
+[assembly: AssemblyCopyright("Copyright © YMC 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

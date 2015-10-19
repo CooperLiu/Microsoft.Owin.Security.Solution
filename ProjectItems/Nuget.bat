@@ -1,0 +1,1 @@
+"..\.nuget\NuGet.exe" "pack" "..\Microsoft.Owin.Security.WeChat\Microsoft.Owin.Security.WeChat.csproj" -Properties Configuration=Debug
