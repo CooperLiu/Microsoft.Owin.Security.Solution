@@ -155,6 +155,7 @@ namespace Microsoft.Owin.Security.WeChat
                 await Options.Provider.Authenticated(context);
 
                 context.Properties = properties;
+                Response.Cookies.Append("ExternalCookie", Options.StateDataFormat.Protect(properties));
 
           
              

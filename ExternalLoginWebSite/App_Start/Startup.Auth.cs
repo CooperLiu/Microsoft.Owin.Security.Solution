@@ -8,6 +8,7 @@ using Microsoft.Owin.Security.WeChat;
 using Owin;
 using ExternalLoginWebSite.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ExternalLoginWebSite
 {
@@ -72,6 +73,20 @@ namespace ExternalLoginWebSite
             //    ClientId = "",
             //    ClientSecret = ""
             //});
+        }
+    }
+
+    public class YMCWechatAuthenticationProvider : IWeChatAuthenticationProvider
+    {
+        public Task Authenticated(WeChatAuthenticatedContext context)
+        {
+            //cookie
+            throw new NotImplementedException();
+        }
+
+        public Task ReturnEndpoint(WeChatReturnEndpointContext context)
+        {
+            throw new NotImplementedException();
         }
     }
 }
