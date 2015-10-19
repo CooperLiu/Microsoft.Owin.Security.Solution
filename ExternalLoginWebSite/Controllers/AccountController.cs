@@ -322,7 +322,8 @@ namespace ExternalLoginWebSite.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
         {
-            var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
+            //var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
+            var loginInfo =  AuthenticationManager.GetExternalLoginInfo();
             if (loginInfo == null)
             {
                 return RedirectToAction("Login");

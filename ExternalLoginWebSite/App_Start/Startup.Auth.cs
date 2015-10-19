@@ -49,11 +49,11 @@ namespace ExternalLoginWebSite
 
             app.UseWeChatAuthentication(new WeChatAuthenticationOptions()
             {
-                AppId = "wx58756c727fe48f97",
-                AppSecret = "c827d0497fd1c58c658ef82e459e7b3c",
+                AppId = "wx7bdccda838b3e3c4",
+                AppSecret = "9d2536d51297e0c22cdcc16c0a336f6a",
                 ReturnEndpointPath = @"/Home/WechatCallback"                
             });
-
+           // ExternalLoginCallback
             // 取消注释以下行可允许使用第三方登录提供程序登录
             //app.UseMicrosoftAccountAuthentication(
             //    clientId: "",
