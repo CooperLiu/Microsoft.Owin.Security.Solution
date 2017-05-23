@@ -75,18 +75,5 @@ namespace ExternalLoginWebSite
             //});
         }
     }
-
-    public class YMCWechatAuthenticationProvider : IWeChatAuthenticationProvider
-    {
-        public Task Authenticated(WeChatAuthenticatedContext context)
-        {
-            //cookie
-            throw new NotImplementedException();
-        }
-
-        public Task ReturnEndpoint(WeChatReturnEndpointContext context)
-        {
-            throw new NotImplementedException();
-        }
-    }
+    
 }
