@@ -18,7 +18,8 @@ namespace Microsoft.Owin.Security.WeChat
             Caption = "微信账号";
             ReturnEndpointPath = "/signin-wechatconnect";            
             AuthenticationMode = AuthenticationMode.Passive;
-            Scope = new List<string> { "snsapi_login" };
+            WechatScope = new string[] { "snsapi_base", "snsapi_userinfo" };
+            Scope = new string[] { "snsapi_login" };
             BackchannelTimeout = TimeSpan.FromSeconds(60);
         }
 
@@ -34,6 +35,9 @@ namespace Microsoft.Owin.Security.WeChat
 
         public IList<string> Scope { get; private set; }
 
+        public IList<string> WechatScope { get; private set; }
+
+
         public string ReturnEndpointPath { get; set; }
 
         public string SignInAsAuthenticationType { get; set; }
@@ -44,9 +48,26 @@ namespace Microsoft.Owin.Security.WeChat
             set { Description.Caption = value; }
         }
 
+        /// <summary>
+        /// 微信网站应用AppId
+        /// </summary>
         public string AppId { get; set; }
 
+        /// <summary>
+        /// 微信网站应用AppSecret
+        /// </summary>
         public string AppSecret { get; set; }
+
+        /// <summary>
+        /// 微信公众号AppId
+        /// </summary>
+        public string WechatAppId { get; set; }
+
+        /// <summary>
+        /// 微信公众号AppSecret
+        /// </summary>
+        public string WechatAppSecret { get; set; }
+
     }
 
 }

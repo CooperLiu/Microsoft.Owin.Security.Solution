@@ -16,12 +16,22 @@ namespace Microsoft.Owin.Security.WeChat
     {
         private const string XmlSchemaString = "http://www.w3.org/2001/XMLSchema#string";
         private const string AuthorizationEndpoint = "https://open.weixin.qq.com/connect/qrconnect";
+        private const string OAuth2AuthorizationEndpoint = "https://open.weixin.qq.com/connect/oauth2/authorize";
         private const string TokenEndpoint = "https://api.weixin.qq.com/sns/oauth2/access_token";
         private const string UserInfoEndpoint = "https://api.weixin.qq.com/sns/userinfo";
         private const string OpenIDEndpoint = "https://api.weixin.qq.com/sns/oauth2";
 
         private readonly HttpClient _httpClient;
         private readonly ILogger _logger;
+
+        private bool IsWeChatBrowser
+        {
+            get
+            {
+                var userAgent = Context.Request.Headers.Get("User-Agent");
+                return userAgent == null ? false : userAgent.Contains("MicroMessenger");
+            }
+        }
 
         public WeChatAccountAuthenticationHandler(HttpClient httpClient, ILogger logger)
         {
@@ -43,8 +53,7 @@ namespace Microsoft.Owin.Security.WeChat
         {
             _logger.WriteVerbose("InvokeReturnPath");
 
-            var model = await AuthenticateAsync();//Goto:AuthenticateCoreAsync()
-            //Todo@cooper:取不到...回调是有问题的，在用户登陆确认之后
+            var model = await AuthenticateAsync();
             if (model == null)
             {
                 _logger.WriteWarning("Invalid return state, unable to redirect.");
@@ -91,7 +100,12 @@ namespace Microsoft.Owin.Security.WeChat
                 string state = null;
 
                 IReadableStringCollection query = Request.Query;
-                IList<string> values = query.GetValues("code");
+
+                IList<string> values = query.GetValues("error");
+                if (values != null && values.Count >= 1)
+                    _logger.WriteVerbose("Remote server returned an error: " + Request.QueryString);
+
+                values = query.GetValues("code");
                 if (values != null && values.Count == 1)
                 {
                     code = values[0];
@@ -108,16 +122,28 @@ namespace Microsoft.Owin.Security.WeChat
                     return null;
                 }
 
+                bool isWeChatBrowser = IsWeChatBrowser;
+
+
                 // OAuth2 10.12 CSRF
-                if (!ValidateCorrelationId(properties, _logger))
+                if (!isWeChatBrowser && !ValidateCorrelationId(properties, _logger))
                 {
                     return new AuthenticationTicket(null, properties);
                 }
 
+                if (string.IsNullOrEmpty(code))
+                {
+                    // Null if the remote server returns an error.
+                    return new AuthenticationTicket(null, properties);
+                }
+
+                var appId = isWeChatBrowser ? Options.WechatAppId : Options.AppId;
+                var appSecrect = isWeChatBrowser ? Options.WechatAppSecret : Options.AppSecret;
+
                 var tokenRequestParameters = new List<KeyValuePair<string, string>>()
                 {
-                    new KeyValuePair<string, string>("appid", Options.AppId),
-                    new KeyValuePair<string, string>("secret", Options.AppSecret),
+                    new KeyValuePair<string, string>("appid", appId), //扫码登陆使用网站应用，网页授权使用公众号应用
+                    new KeyValuePair<string, string>("secret", appSecrect),//扫码登陆使用网站应用，网页授权使用公众号应用
                     new KeyValuePair<string, string>("code", code),
                     new KeyValuePair<string, string>("grant_type", "authorization_code"),
                 };
@@ -127,33 +153,50 @@ namespace Microsoft.Owin.Security.WeChat
                 HttpResponseMessage response = await _httpClient.PostAsync(TokenEndpoint, requestContent, Request.CallCancelled);
                 response.EnsureSuccessStatusCode();
                 string oauthTokenResponse = await response.Content.ReadAsStringAsync();
-                JsonSerializer js = new JsonSerializer();
-                AccessTokenResult tokenResult = js.Deserialize<AccessTokenResult>(new JsonTextReader(new System.IO.StringReader(oauthTokenResponse)));
-                if (tokenResult == null || tokenResult.access_token == null)
-                {
-                    _logger.WriteWarning("Access token was not found");
-                    return new AuthenticationTicket(null, properties);
-                }
+                JObject json = JObject.Parse(oauthTokenResponse);
+
+                string accessToken = json.Value<string>("access_token");
+                string refreshToken = json.Value<string>("refresh_token");
+                int expires = json.Value<int>("expires_in");
+                string openId = json.Value<string>("openid");
+
 
                 string userInfoUri = UserInfoEndpoint +
-                    "?access_token=" + Uri.EscapeDataString(tokenResult.access_token) +
-                    "&openid=" + Uri.EscapeDataString(tokenResult.openid);
+                    "?access_token=" + Uri.EscapeDataString(accessToken) +
+                    "&openid=" + Uri.EscapeDataString(openId);
                 HttpResponseMessage userInfoResponse = await _httpClient.GetAsync(userInfoUri, Request.CallCancelled);
                 userInfoResponse.EnsureSuccessStatusCode();
                 string userInfoString = await userInfoResponse.Content.ReadAsStringAsync();
                 JObject userInfo = JObject.Parse(userInfoString);
 
-                var context = new WeChatAuthenticatedContext(Context, tokenResult.openid, userInfo, tokenResult.access_token);
-                context.Identity = new ClaimsIdentity(new[]{
-                    new Claim(ClaimTypes.NameIdentifier, context.Id,XmlSchemaString,Options.AuthenticationType),
-                    new Claim(ClaimsIdentity.DefaultNameClaimType, context.Name,XmlSchemaString,Options.AuthenticationType),
-                    new Claim("urn:wechatconnect:id", context.Id,XmlSchemaString,Options.AuthenticationType),
-                    new Claim("urn:wechatconnect:name", context.Name,XmlSchemaString,Options.AuthenticationType),
-                });
+                var context = new WeChatAuthenticatedContext(Context, json, accessToken, refreshToken, expires);
+                context.Identity = new ClaimsIdentity(Options.AuthenticationType, ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
 
-                await Options.Provider.Authenticated(context);
+                // Caution: 当公众帐号绑定到开放平台时，NameIdentifier == UnionId, 否则 NameIdentifier == OpenId
+                context.Identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, context.Id, ClaimValueTypes.String, Options.AuthenticationType));
+                if (!string.IsNullOrEmpty(context.Name))
+                {
+                    context.Identity.AddClaim(new Claim(ClaimsIdentity.DefaultNameClaimType, context.Name, ClaimValueTypes.String, Options.AuthenticationType));
+                }
+                if (!string.IsNullOrEmpty(context.OpenId))
+                {
+                    context.Identity.AddClaim(new Claim(WeChatClaimTypes.OpenId, context.OpenId, ClaimValueTypes.String, Options.AuthenticationType));
+                }
+                if (!string.IsNullOrEmpty(context.UnionId))
+                {
+                    context.Identity.AddClaim(new Claim(WeChatClaimTypes.UnionId, context.UnionId, ClaimValueTypes.String, Options.AuthenticationType));
+                }
+                context.Identity.AddClaim(new Claim(WeChatClaimTypes.AccessToken, context.AccessToken, ClaimValueTypes.String, Options.AuthenticationType));
+                if (!string.IsNullOrEmpty(context.RefreshToken))
+                {
+                    context.Identity.AddClaim(new Claim(WeChatClaimTypes.RefreshToken, context.RefreshToken, ClaimValueTypes.String, Options.AuthenticationType));
+                }
+                context.Identity.AddClaim(new Claim(WeChatClaimTypes.AccessTokenExpiresUtc, DateTimeOffset.UtcNow.Add(context.ExpiresIn).ToString(), ClaimValueTypes.DateTime, Options.AuthenticationType));
+
 
                 context.Properties = properties;
+
+                await Options.Provider.Authenticated(context);
 
                 return new AuthenticationTicket(context.Identity, context.Properties);
             }
@@ -178,32 +221,50 @@ namespace Microsoft.Owin.Security.WeChat
 
             if (challenge != null)
             {
-                string requestPrefix = Request.Scheme + "://" + Request.Host;
+                var baseUri = Request.Scheme + "://" + Request.Host + Request.PathBase;
                 string currentQueryString = Request.QueryString.Value;
                 string currentUri = string.IsNullOrEmpty(currentQueryString)
-                    ? requestPrefix + Request.PathBase + Request.Path
-                    : requestPrefix + Request.PathBase + Request.Path + "?" + currentQueryString;
-
-                string redirectUri = requestPrefix + Request.PathBase + Options.ReturnEndpointPath;
+                    ? baseUri + Request.Path
+                    : baseUri + Request.Path + "?" + currentQueryString;
 
                 AuthenticationProperties properties = challenge.Properties;
 
-                if (string.IsNullOrEmpty(properties.RedirectUri))
+
+                string redirectUri = null;
+                var isWeChatBrowser = IsWeChatBrowser;
+
+                var appId = isWeChatBrowser ? Options.WechatAppId : Options.AppId;
+                var appSecrect = isWeChatBrowser ? Options.WechatAppSecret : Options.AppSecret;
+
+
+                if (isWeChatBrowser)
                 {
-                    properties.RedirectUri = currentUri;
+                    var callbackRedirectUri = string.IsNullOrEmpty(properties.RedirectUri) ? currentUri : properties.RedirectUri;
+
+                    properties.RedirectUri = null;
+
+                    redirectUri = $"{baseUri}{Options.ReturnEndpointPath}?ReturnUrl={Uri.EscapeDataString(callbackRedirectUri)}";
+                }
+                else
+                {
+                    redirectUri = $"{baseUri}{Options.ReturnEndpointPath}";
+
+                    properties.RedirectUri = string.IsNullOrEmpty(properties.RedirectUri) ? currentUri : properties.RedirectUri;
+
+                    // OAuth2 10.12 CSRF
+                    GenerateCorrelationId(properties);
                 }
 
-                // OAuth2 10.12 CSRF
-                GenerateCorrelationId(properties);
-
                 // comma separated
-                string scope = string.Join(",", Options.Scope);
+                string scope = isWeChatBrowser ? string.Join(",", Options.WechatScope) : string.Join(",", Options.Scope);
 
                 string state = Options.StateDataFormat.Protect(properties);
 
+                var authUri = isWeChatBrowser ? OAuth2AuthorizationEndpoint : AuthorizationEndpoint;
+
                 string authorizationEndpoint =
-                    AuthorizationEndpoint +
-                        "?appid=" + Uri.EscapeDataString(Options.AppId) +
+                    authUri +
+                        "?appid=" + Uri.EscapeDataString(appId) +
                         "&redirect_uri=" + Uri.EscapeDataString(redirectUri) +
                         "&response_type=code" +
                         "&scope=" + Uri.EscapeDataString(scope) +
@@ -216,30 +277,5 @@ namespace Microsoft.Owin.Security.WeChat
             return Task.FromResult<object>(null);
         }
 
-        private string GenerateRedirectUri()
-        {
-            string requestPrefix = Request.Scheme + "://" + Request.Host;
-
-            string redirectUri = requestPrefix + RequestPathBase + Options.ReturnEndpointPath; // + "?state=" + Uri.EscapeDataString(Options.StateDataFormat.Protect(state));            
-            return redirectUri;
-        }
-
-        [Serializable]
-        public class AccessTokenResult
-        {
-            public string errcode { get; set; }
-
-            public string errmsg { get; set; }
-
-            public string access_token { get; set; }
-
-            public string expires_in { get; set; }
-
-            public string refresh_token { get; set; }
-
-            public string openid { get; set; }
-
-            public string scope { get; set; }
-        }
     }
 }

@@ -64,6 +64,7 @@
     <Compile Include="WeChatAuthenticationExtensions.cs" />
     <Compile Include="WeChatAuthenticationMiddleware.cs" />
     <Compile Include="WeChatAuthenticationOptions.cs" />
+    <Compile Include="WeChatClaimTypes.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

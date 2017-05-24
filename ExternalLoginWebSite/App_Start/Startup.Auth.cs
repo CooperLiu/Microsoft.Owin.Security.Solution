@@ -52,6 +52,8 @@ namespace ExternalLoginWebSite
             {
                 AppId = "wx65ae9bf3bc6ce6d8",
                 AppSecret = "12c6b866667ada48891789767e3be565",
+                WechatAppId= "wx9dc86883b02dc326",
+                WechatAppSecret= "c40e3b35db6338df96cd64f8bf1be9ea",
                 ReturnEndpointPath = @"/Home/WechatCallback"                
             });
            // ExternalLoginCallback
