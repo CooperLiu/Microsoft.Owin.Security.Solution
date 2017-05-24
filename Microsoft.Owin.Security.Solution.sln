@@ -21,6 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ProjectItems", "ProjectItem
 		ProjectItems\Nuget.bat = ProjectItems\Nuget.bat
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Owin.Security.Weibo", "Microsoft.Owin.Security.Weibo\Microsoft.Owin.Security.Weibo.csproj", "{53546A27-7B98-41C1-95E8-6319AB29F461}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{DA1EFE14-AFE0-46A4-82D4-2A2EAAE22AD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA1EFE14-AFE0-46A4-82D4-2A2EAAE22AD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA1EFE14-AFE0-46A4-82D4-2A2EAAE22AD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53546A27-7B98-41C1-95E8-6319AB29F461}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53546A27-7B98-41C1-95E8-6319AB29F461}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53546A27-7B98-41C1-95E8-6319AB29F461}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53546A27-7B98-41C1-95E8-6319AB29F461}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
