@@ -242,6 +242,10 @@
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Microsoft.Owin.Security.QQ\Microsoft.Owin.Security.QQ.csproj">
+      <Project>{2b96497a-c363-473a-bdd4-cc390b7adb96}</Project>
+      <Name>Microsoft.Owin.Security.QQ</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Microsoft.Owin.Security.WeChat\Microsoft.Owin.Security.WeChat.csproj">
       <Project>{a9a0ba07-5273-4d93-a398-e5f94177cc38}</Project>
       <Name>Microsoft.Owin.Security.WeChat</Name>

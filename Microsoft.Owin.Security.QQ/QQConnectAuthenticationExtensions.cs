@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 using System;
-using Microsoft.Owin.Security.WeChat;
+using Microsoft.Owin.Security.QQ;
 using Microsoft.Owin.Security;
 
 namespace Owin

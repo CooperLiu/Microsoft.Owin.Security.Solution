@@ -18,7 +18,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using Microsoft.Owin.Security;
 
-namespace Microsoft.Owin.Security.WeChat
+namespace Microsoft.Owin.Security.QQ
 {
     public class QQConnectAuthenticationOptions : AuthenticationOptions
     {

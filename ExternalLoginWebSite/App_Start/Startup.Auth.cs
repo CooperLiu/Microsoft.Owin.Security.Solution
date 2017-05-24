@@ -4,11 +4,12 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.Google;
-using Microsoft.Owin.Security.WeChat;
+using Microsoft.Owin.Security.QQ;
 using Owin;
 using ExternalLoginWebSite.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Owin.Security.WeChat;
 
 namespace ExternalLoginWebSite
 {

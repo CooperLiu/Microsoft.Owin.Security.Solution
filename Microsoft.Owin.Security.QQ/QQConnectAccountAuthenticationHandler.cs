@@ -24,7 +24,7 @@ using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Infrastructure;
 using Newtonsoft.Json.Linq;
 
-namespace Microsoft.Owin.Security.WeChat
+namespace Microsoft.Owin.Security.QQ
 {
     internal class QQConnectAccountAuthenticationHandler : AuthenticationHandler<QQConnectAuthenticationOptions>
     {

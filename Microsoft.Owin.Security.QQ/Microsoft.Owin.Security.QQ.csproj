@@ -7,7 +7,7 @@
     <ProjectGuid>{2B96497A-C363-473A-BDD4-CC390B7ADB96}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Microsoft.Owin.Security.WeChat</RootNamespace>
+    <RootNamespace>Microsoft.Owin.Security.QQ</RootNamespace>
     <AssemblyName>Microsoft.Owin.Security.QQ</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
