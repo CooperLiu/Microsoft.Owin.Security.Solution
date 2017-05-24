@@ -56,7 +56,7 @@ namespace Microsoft.Owin.Security.WeChat
             var context = new WeChatReturnEndpointContext(Context, model);
             context.SignInAsAuthenticationType = Options.SignInAsAuthenticationType;
             context.RedirectUri = model.Properties.RedirectUri;
-			model.Properties.RedirectUri = null;
+            model.Properties.RedirectUri = null;
 
             await Options.Provider.ReturnEndpoint(context);
             if (context.SignInAsAuthenticationType != null && context.Identity != null)
@@ -128,13 +128,13 @@ namespace Microsoft.Owin.Security.WeChat
                 response.EnsureSuccessStatusCode();
                 string oauthTokenResponse = await response.Content.ReadAsStringAsync();
                 JsonSerializer js = new JsonSerializer();
-                AccessTokenResult tokenResult= js.Deserialize<AccessTokenResult>(new JsonTextReader(new System.IO.StringReader(oauthTokenResponse)));
+                AccessTokenResult tokenResult = js.Deserialize<AccessTokenResult>(new JsonTextReader(new System.IO.StringReader(oauthTokenResponse)));
                 if (tokenResult == null || tokenResult.access_token == null)
                 {
                     _logger.WriteWarning("Access token was not found");
                     return new AuthenticationTicket(null, properties);
                 }
-                
+
                 string userInfoUri = UserInfoEndpoint +
                     "?access_token=" + Uri.EscapeDataString(tokenResult.access_token) +
                     "&openid=" + Uri.EscapeDataString(tokenResult.openid);
@@ -203,11 +203,12 @@ namespace Microsoft.Owin.Security.WeChat
 
                 string authorizationEndpoint =
                     AuthorizationEndpoint +
-                        "?appid=" + Uri.EscapeDataString(Options.AppId ?? string.Empty) +
+                        "?appid=" + Uri.EscapeDataString(Options.AppId) +
                         "&redirect_uri=" + Uri.EscapeDataString(redirectUri) +
+                        "&response_type=code" +
                         "&scope=" + Uri.EscapeDataString(scope) +
                         "&state=" + Uri.EscapeDataString(state) +
-                        "&response_type=code#wechat_redirect";
+                        "#wechat_redirect";
 
                 Response.Redirect(authorizationEndpoint);
             }

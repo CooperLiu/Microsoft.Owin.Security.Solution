@@ -50,8 +50,8 @@ namespace ExternalLoginWebSite
 
             app.UseWeChatAuthentication(new WeChatAuthenticationOptions()
             {
-                AppId = "wx58756c727fe48f97",
-                AppSecret = "c827d0497fd1c58c658ef82e459e7b3c",
+                AppId = "wx65ae9bf3bc6ce6d8",
+                AppSecret = "12c6b866667ada48891789767e3be565",
                 ReturnEndpointPath = @"/Home/WechatCallback"                
             });
            // ExternalLoginCallback

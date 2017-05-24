@@ -329,7 +329,7 @@ namespace ExternalLoginWebSite.Controllers
             }
 
             // 如果用户已具有登录名，则使用此外部登录提供程序将该用户登录
-            var result = await SignInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
+            var result = SignInStatus.Success; //await SignInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
             switch (result)
             {
                 case SignInStatus.Success:

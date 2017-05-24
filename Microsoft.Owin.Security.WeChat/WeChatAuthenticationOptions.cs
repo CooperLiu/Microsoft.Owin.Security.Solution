@@ -18,7 +18,7 @@ namespace Microsoft.Owin.Security.WeChat
             Caption = "微信账号";
             ReturnEndpointPath = "/signin-wechatconnect";            
             AuthenticationMode = AuthenticationMode.Passive;
-            Scope = new List<string> { "snsapi_base", "snsapi_userinfo" };
+            Scope = new List<string> { "snsapi_login" };
             BackchannelTimeout = TimeSpan.FromSeconds(60);
         }
 
