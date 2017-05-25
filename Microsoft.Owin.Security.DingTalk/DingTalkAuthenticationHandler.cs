@@ -15,7 +15,8 @@ namespace Microsoft.Owin.Security.DingTalk
     internal class DingTalkAuthenticationHandler : AuthenticationHandler<DingTalkAuthenticationOptions>
     {
         private const string XmlSchemaString = "http://www.w3.org/2001/XMLSchema#string";
-        private const string AuthorizationEndpoint = "https://oapi.dingtalk.com/connect/oauth2/sns_authorize";
+        private const string OAuth2AuthorizationEndpoint = "https://oapi.dingtalk.com/connect/oauth2/sns_authorize";
+        private const string QrConnetAuthorizationEndpoint = "https://oapi.dingtalk.com/connect/qrconnect";
         private const string TokenEndpoint = "https://oapi.dingtalk.com/sns/gettoken";
         private const string PersistentEndpoint = "https://oapi.dingtalk.com/sns/get_persistent_code";
         private const string SnsTokenEndpoint = "https://oapi.dingtalk.com/sns/get_sns_token";
@@ -177,7 +178,7 @@ namespace Microsoft.Owin.Security.DingTalk
                 #endregion
 
                 //https://oapi.dingtalk.com/sns/get_sns_token?access_token=ACCESS_TOKEN
-                
+
                 #region 获取用户授权的SNS_TOKEN
 
                 string snsToken = null;
@@ -211,7 +212,7 @@ namespace Microsoft.Owin.Security.DingTalk
                 HttpResponseMessage userInfoResponse = await _httpClient.GetAsync(userInfoUri, Request.CallCancelled);
                 userInfoResponse.EnsureSuccessStatusCode();
                 string userInfoString = await userInfoResponse.Content.ReadAsStringAsync();
-                JObject userInfo = JObject.Parse(userInfoString); 
+                JObject userInfo = JObject.Parse(userInfoString);
 
                 #endregion
 
@@ -291,7 +292,9 @@ namespace Microsoft.Owin.Security.DingTalk
 
                 string state = Options.StateDataFormat.Protect(properties);
 
-                var authUri = AuthorizationEndpoint;
+                var authUri = Options.AuthenticateType == DingTalkAuthenticateType.OAuth2
+                    ? OAuth2AuthorizationEndpoint
+                    : QrConnetAuthorizationEndpoint;
 
                 string authorizationEndpoint =
                     authUri +

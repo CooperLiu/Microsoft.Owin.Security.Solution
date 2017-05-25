@@ -242,6 +242,10 @@
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Microsoft.Owin.Security.DingTalk\Microsoft.Owin.Security.DingTalk.csproj">
+      <Project>{9d31003b-3ead-40aa-bb54-17e45f5acae7}</Project>
+      <Name>Microsoft.Owin.Security.DingTalk</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Microsoft.Owin.Security.QQ\Microsoft.Owin.Security.QQ.csproj">
       <Project>{2b96497a-c363-473a-bdd4-cc390b7adb96}</Project>
       <Name>Microsoft.Owin.Security.QQ</Name>

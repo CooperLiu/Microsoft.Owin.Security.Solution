@@ -10,6 +10,7 @@ using ExternalLoginWebSite.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Owin.Security.WeChat;
+using Microsoft.Owin.Security.DingTalk;
 
 namespace ExternalLoginWebSite
 {
@@ -53,11 +54,19 @@ namespace ExternalLoginWebSite
             {
                 AppId = "wx65ae9bf3bc6ce6d8",
                 AppSecret = "12c6b866667ada48891789767e3be565",
-                WechatAppId= "wx9dc86883b02dc326",
-                WechatAppSecret= "c40e3b35db6338df96cd64f8bf1be9ea",
-                ReturnEndpointPath = @"/Home/WechatCallback"                
+                WechatAppId = "wx9dc86883b02dc326",
+                WechatAppSecret = "c40e3b35db6338df96cd64f8bf1be9ea",
+                ReturnEndpointPath = @"/Home/WechatCallback"
             });
-           // ExternalLoginCallback
+
+            app.UseDingTalkAuthentication(new DingTalkAuthenticationOptions()
+            {
+                AppId = "dingoadzyyakqhhzqvmorm",
+                AppSecret = "3yTHuOsvN1hhFkN3yNvyK6-L0iLEWanZWUmxKT2b--rstYCCm2_-vVHBVkH0FX0s",
+                ReturnEndpointPath= "/Home/WechatCallback"
+            });
+
+            // ExternalLoginCallback
             // 取消注释以下行可允许使用第三方登录提供程序登录
             //app.UseMicrosoftAccountAuthentication(
             //    clientId: "",
@@ -78,5 +87,5 @@ namespace ExternalLoginWebSite
             //});
         }
     }
-    
+
 }

@@ -35,7 +35,7 @@ namespace Microsoft.Owin.Security.DingTalk
         public JObject User { get; private set; }
 
         /// <summary>
-        /// Gets the WeChat access token
+        /// Gets the DingTalk access token
         /// </summary>
         public string AccessToken { get; private set; }
 
@@ -45,7 +45,7 @@ namespace Microsoft.Owin.Security.DingTalk
         public string PersistentCode { get; private set; }
 
         /// <summary>
-        /// Gets the WeChat access token expiration time
+        /// Gets the DingTalk access token expiration time
         /// </summary>
         public TimeSpan SnsTokenExpiresIn { get; private set; }
 

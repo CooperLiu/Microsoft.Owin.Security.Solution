@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Microsoft.Owin.Security.DingTalk")]
-[assembly: AssemblyDescription("Middleware that enables an application to support WeChat OAuth 2.0 authentication workflow.")]
+[assembly: AssemblyDescription("Middleware that enables an application to support DingTalk OAuth 2.0 authentication workflow.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("YMC")]
 [assembly: AssemblyProduct("Microsoft.Owin.Security.DingTalk")]
-[assembly: AssemblyCopyright("Copyright © YMC 2015")]
+[assembly: AssemblyCopyright("Copyright © JK724 2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

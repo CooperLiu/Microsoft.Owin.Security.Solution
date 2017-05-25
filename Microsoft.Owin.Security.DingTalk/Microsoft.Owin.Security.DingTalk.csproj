@@ -55,6 +55,7 @@
     <Reference Include="System.Net.Http.WebRequest" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DingTalkAuthenticateType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Provider\IDingTalkAuthenticationProvider.cs" />
     <Compile Include="Provider\DingTalkAuthenticatedContext.cs" />

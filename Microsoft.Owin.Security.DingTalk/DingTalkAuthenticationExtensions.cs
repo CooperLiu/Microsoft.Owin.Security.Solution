@@ -6,7 +6,7 @@ namespace Owin
 {
     public static class DingTalkAuthenticationExtensions
     {
-        public static void UseWeChatAuthentication(this IAppBuilder app, DingTalkAuthenticationOptions options)
+        public static void UseDingTalkAuthentication(this IAppBuilder app, DingTalkAuthenticationOptions options)
         {
             if (app == null)
             {
@@ -20,9 +20,9 @@ namespace Owin
             app.Use(typeof(DingTalkAuthenticationMiddleware), app, options);
         }
 
-        public static void UseWeChatAuthentication(this IAppBuilder app, string appId, string appSecret)
+        public static void UseDingTalkAuthentication(this IAppBuilder app, string appId, string appSecret)
         {
-            UseWeChatAuthentication(app, new DingTalkAuthenticationOptions()
+            UseDingTalkAuthentication(app, new DingTalkAuthenticationOptions()
             {
                 AppId = appId,
                 AppSecret = appSecret,

@@ -12,12 +12,14 @@ namespace Microsoft.Owin.Security.DingTalk
     public class DingTalkAuthenticationOptions : AuthenticationOptions
     {
         public const string AUTHENTICATION_TYPE = "DingTalk";
+
         public DingTalkAuthenticationOptions()
             : base(AUTHENTICATION_TYPE)
         {
             Caption = "钉钉";
             ReturnEndpointPath = "/signin-dingTalk-callback";
             AuthenticationMode = AuthenticationMode.Passive;
+            AuthenticateType = DingTalkAuthenticateType.OAuth2;
             Scope = new string[] { "snsapi_login" };
             BackchannelTimeout = TimeSpan.FromSeconds(60);
         }
@@ -43,6 +45,8 @@ namespace Microsoft.Owin.Security.DingTalk
             get { return Description.Caption; }
             set { Description.Caption = value; }
         }
+
+        public DingTalkAuthenticateType AuthenticateType { get; set; }
 
         /// <summary>
         /// 微信网站应用AppId
