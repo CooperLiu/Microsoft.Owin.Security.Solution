@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Owin;
 using Microsoft.Owin.Logging;
@@ -14,7 +15,6 @@ namespace Microsoft.Owin.Security.DingTalk
 {
     internal class DingTalkAuthenticationHandler : AuthenticationHandler<DingTalkAuthenticationOptions>
     {
-        private const string XmlSchemaString = "http://www.w3.org/2001/XMLSchema#string";
         private const string OAuth2AuthorizationEndpoint = "https://oapi.dingtalk.com/connect/oauth2/sns_authorize";
         private const string QrConnetAuthorizationEndpoint = "https://oapi.dingtalk.com/connect/qrconnect";
         private const string TokenEndpoint = "https://oapi.dingtalk.com/sns/gettoken";
@@ -46,38 +46,45 @@ namespace Microsoft.Owin.Security.DingTalk
         {
             _logger.WriteVerbose("InvokeReturnPath");
 
-            var model = await AuthenticateAsync();
-            if (model == null)
+            if (!string.IsNullOrEmpty(Options.ReturnEndpointPath))
             {
-                _logger.WriteWarning("Invalid return state, unable to redirect.");
-                System.Diagnostics.Debug.WriteLine("Invalid return state, unable to redirect.");
-                Response.StatusCode = 500;
-                return true;
-            }
-
-            var context = new DingTalkReturnEndpointContext(Context, model);
-            context.SignInAsAuthenticationType = Options.SignInAsAuthenticationType;
-            context.RedirectUri = model.Properties.RedirectUri;
-            model.Properties.RedirectUri = null;
-
-            await Options.Provider.ReturnEndpoint(context);
-            if (context.SignInAsAuthenticationType != null && context.Identity != null)
-            {
-                ClaimsIdentity signInIdentity = context.Identity;
-                if (!string.Equals(signInIdentity.AuthenticationType, context.SignInAsAuthenticationType, StringComparison.Ordinal))
+                if (Request.Path.StartsWithSegments(new PathString(Options.ReturnEndpointPath))|| Options.ReturnEndpointPath == Request.Path.Value)
                 {
-                    signInIdentity = new ClaimsIdentity(signInIdentity.Claims, context.SignInAsAuthenticationType, signInIdentity.NameClaimType, signInIdentity.RoleClaimType);
+                    var model = await AuthenticateAsync();
+                    if (model == null)
+                    {
+                        _logger.WriteWarning("Invalid return state, unable to redirect.");
+                        Response.StatusCode = 500;
+                        return true;
+                    }
+
+                    var context = new DingTalkReturnEndpointContext(Context, model);
+                    context.SignInAsAuthenticationType = Options.SignInAsAuthenticationType;
+                    context.RedirectUri = model.Properties.RedirectUri;
+                    model.Properties.RedirectUri = null;
+
+                    await Options.Provider.ReturnEndpoint(context);
+                    if (context.SignInAsAuthenticationType != null && context.Identity != null)
+                    {
+                        ClaimsIdentity signInIdentity = context.Identity;
+                        if (!string.Equals(signInIdentity.AuthenticationType, context.SignInAsAuthenticationType, StringComparison.Ordinal))
+                        {
+                            signInIdentity = new ClaimsIdentity(signInIdentity.Claims, context.SignInAsAuthenticationType, signInIdentity.NameClaimType, signInIdentity.RoleClaimType);
+                        }
+                        Context.Authentication.SignIn(context.Properties, signInIdentity);
+                    }
+
+                    if (!context.IsRequestCompleted && context.RedirectUri != null)
+                    {
+                        Response.Redirect(context.RedirectUri);
+                        context.RequestCompleted();
+                    }
+
+                    return context.IsRequestCompleted;  
                 }
-                Context.Authentication.SignIn(context.Properties, signInIdentity);
             }
 
-            if (!context.IsRequestCompleted && context.RedirectUri != null)
-            {
-                Response.Redirect(context.RedirectUri);
-                context.RequestCompleted();
-            }
-
-            return context.IsRequestCompleted;
+            return false;
         }
 
         protected override async Task<AuthenticationTicket> AuthenticateCoreAsync()
@@ -155,13 +162,11 @@ namespace Microsoft.Owin.Security.DingTalk
                 string unionid = null;
                 string persistentcode = null;
 
-                StringContent requestContent = new StringContent("{\"tmp_auth_code\": \"" + code + "\"}");
+                StringContent requestContent = new StringContent("{\"tmp_auth_code\": \"" + code + "\"}", Encoding.UTF8, "application/json");
 
                 using (var message = new HttpRequestMessage(HttpMethod.Post, $"{PersistentEndpoint}?access_token={accessToken}"))
                 {
                     message.Content = requestContent;
-                    message.Headers.Clear();
-                    message.Headers.Add("Content-Type", "application/json");
 
                     var res = await _httpClient.SendAsync(message, Request.CallCancelled);
                     res.EnsureSuccessStatusCode();
@@ -184,13 +189,11 @@ namespace Microsoft.Owin.Security.DingTalk
                 string snsToken = null;
                 int snsTokenExpires = 0;
 
-                var snsRequestContent = new StringContent("{\"openid\": \"" + openid + "\",\"persistent_code\": \"" + persistentcode + "\"}");
+                var snsRequestContent = new StringContent("{\"openid\": \"" + openid + "\",\"persistent_code\": \"" + persistentcode + "\"}", Encoding.UTF8, "application/json");
 
                 using (var message = new HttpRequestMessage(HttpMethod.Post, $"{SnsTokenEndpoint}?access_token={accessToken}"))
                 {
                     message.Content = snsRequestContent;
-                    message.Headers.Clear();
-                    message.Headers.Add("Content-Type", "application/json");
                     var res = await _httpClient.SendAsync(message, Request.CallCancelled);
                     res.EnsureSuccessStatusCode();
 
@@ -282,7 +285,7 @@ namespace Microsoft.Owin.Security.DingTalk
 
                 var redirectUri = $"{baseUri}{Options.ReturnEndpointPath}";
 
-                properties.RedirectUri = string.IsNullOrEmpty(properties.RedirectUri) ? currentUri : properties.RedirectUri;
+                properties.RedirectUri = string.IsNullOrEmpty(properties.RedirectUri) ? currentUri : properties.RedirectUri;// + $"?returnUrl={Options.ReturnEndpointPath}";
 
                 // OAuth2 10.12 CSRF
                 GenerateCorrelationId(properties);

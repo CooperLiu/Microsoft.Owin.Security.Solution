@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using Microsoft.Owin.Security;
-using System.Text;
-using System.Security.Cryptography;
-using System.IO;
-using Newtonsoft.Json;
 
 namespace Microsoft.Owin.Security.DingTalk
 {
@@ -17,9 +12,9 @@ namespace Microsoft.Owin.Security.DingTalk
             : base(AUTHENTICATION_TYPE)
         {
             Caption = "钉钉";
-            ReturnEndpointPath = "/signin-dingTalk-callback";
+            ReturnEndpointPath = "/signin-dingTalk";
             AuthenticationMode = AuthenticationMode.Passive;
-            AuthenticateType = DingTalkAuthenticateType.OAuth2;
+            AuthenticateType = DingTalkAuthenticateType.QrConnect;
             Scope = new string[] { "snsapi_login" };
             BackchannelTimeout = TimeSpan.FromSeconds(60);
         }

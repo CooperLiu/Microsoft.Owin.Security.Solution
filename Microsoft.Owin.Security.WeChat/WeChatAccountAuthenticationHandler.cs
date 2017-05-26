@@ -53,8 +53,10 @@ namespace Microsoft.Owin.Security.WeChat
         {
             _logger.WriteVerbose("InvokeReturnPath");
 
-            var model = await AuthenticateAsync();
-            if (model == null)
+            bool isWeChatBrowser = IsWeChatBrowser;
+
+            var ticket = await AuthenticateAsync();
+            if (ticket == null)
             {
                 _logger.WriteWarning("Invalid return state, unable to redirect.");
                 System.Diagnostics.Debug.WriteLine("Invalid return state, unable to redirect.");
@@ -62,10 +64,12 @@ namespace Microsoft.Owin.Security.WeChat
                 return true;
             }
 
-            var context = new WeChatReturnEndpointContext(Context, model);
+            var context = new WeChatReturnEndpointContext(Context, ticket);
             context.SignInAsAuthenticationType = Options.SignInAsAuthenticationType;
-            context.RedirectUri = model.Properties.RedirectUri;
-            model.Properties.RedirectUri = null;
+            // context.RedirectUri = model.Properties.RedirectUri;
+            context.RedirectUri = isWeChatBrowser ? Request.Query["ReturnUrl"] : context.RedirectUri = ticket.Properties.RedirectUri;   // Hate WeChat
+
+            ticket.Properties.RedirectUri = null;
 
             await Options.Provider.ReturnEndpoint(context);
             if (context.SignInAsAuthenticationType != null && context.Identity != null)

@@ -56,14 +56,14 @@ namespace ExternalLoginWebSite
                 AppSecret = "12c6b866667ada48891789767e3be565",
                 WechatAppId = "wx9dc86883b02dc326",
                 WechatAppSecret = "c40e3b35db6338df96cd64f8bf1be9ea",
-                ReturnEndpointPath = @"/Home/WechatCallback"
+                ReturnEndpointPath = @"sigin-wechat"
             });
 
             app.UseDingTalkAuthentication(new DingTalkAuthenticationOptions()
             {
                 AppId = "dingoadzyyakqhhzqvmorm",
                 AppSecret = "3yTHuOsvN1hhFkN3yNvyK6-L0iLEWanZWUmxKT2b--rstYCCm2_-vVHBVkH0FX0s",
-                ReturnEndpointPath= "/Home/WechatCallback"
+                ReturnEndpointPath= "/sigin-dingTalk"
             });
 
             // ExternalLoginCallback

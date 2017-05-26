@@ -20,6 +20,7 @@ namespace ExternalLoginWebSite.Controllers
             return View();
         }
 
+        [Authorize]
         public ActionResult Contact()
         {
             ViewBag.Message = "微信回调地址";
@@ -31,7 +32,7 @@ namespace ExternalLoginWebSite.Controllers
         {
             ViewBag.Title = "微信回调地址";
             return View();
-                
+
         }
     }
 }
