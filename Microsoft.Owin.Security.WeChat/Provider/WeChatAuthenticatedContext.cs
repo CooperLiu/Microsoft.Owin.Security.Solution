@@ -110,7 +110,7 @@ namespace Microsoft.Owin.Security.WeChat
         /// </summary>
         public string UnionId { get; private set; }
 
-
+        ///<summary>
         /// Gets the <see cref="ClaimsIdentity"/> representing the user
         /// </summary>
         public ClaimsIdentity Identity { get; set; }

@@ -173,7 +173,7 @@ namespace Microsoft.Owin.Security.WeChat
                 string userInfoString = await userInfoResponse.Content.ReadAsStringAsync();
                 JObject userInfo = JObject.Parse(userInfoString);
 
-                var context = new WeChatAuthenticatedContext(Context, json, accessToken, refreshToken, expires);
+                var context = new WeChatAuthenticatedContext(Context, userInfo, accessToken, refreshToken, expires);
                 context.Identity = new ClaimsIdentity(Options.AuthenticationType, ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
 
                 // Caution: 当公众帐号绑定到开放平台时，NameIdentifier == UnionId, 否则 NameIdentifier == OpenId

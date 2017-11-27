@@ -56,7 +56,7 @@ namespace ExternalLoginWebSite
                 AppSecret = "12c6b866667ada48891789767e3be565",
                 WechatAppId = "wx9dc86883b02dc326",
                 WechatAppSecret = "c40e3b35db6338df96cd64f8bf1be9ea",
-                ReturnEndpointPath = @"sigin-wechat"
+                ReturnEndpointPath = @"/sigin-wechat"
             });
 
             app.UseDingTalkAuthentication(new DingTalkAuthenticationOptions()
