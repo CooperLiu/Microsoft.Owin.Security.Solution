@@ -29,7 +29,7 @@ namespace Microsoft.Owin.Security.WeChat
             get
             {
                 var userAgent = Context.Request.Headers.Get("User-Agent");
-                return userAgent == null ? false : userAgent.Contains("MicroMessenger");
+                return userAgent != null && (Options.IsSupportWechatBrower && userAgent.Contains("MicroMessenger"));
             }
         }
 

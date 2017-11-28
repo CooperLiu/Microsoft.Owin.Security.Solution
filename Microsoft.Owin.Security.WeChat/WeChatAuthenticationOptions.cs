@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using Microsoft.Owin.Security;
-using System.Text;
-using System.Security.Cryptography;
-using System.IO;
-using Newtonsoft.Json;
 
 namespace Microsoft.Owin.Security.WeChat
 {
@@ -21,6 +16,7 @@ namespace Microsoft.Owin.Security.WeChat
             WechatScope = new string[] { "snsapi_base", "snsapi_userinfo" };
             Scope = new string[] { "snsapi_login" };
             BackchannelTimeout = TimeSpan.FromSeconds(60);
+            IsSupportWechatBrower = false;
         }
 
         public ISecureDataFormat<AuthenticationProperties> StateDataFormat { get; set; }
@@ -57,6 +53,11 @@ namespace Microsoft.Owin.Security.WeChat
         /// 微信网站应用AppSecret
         /// </summary>
         public string AppSecret { get; set; }
+
+        /// <summary>
+        /// 是否支持微信浏览器
+        /// </summary>
+        public bool IsSupportWechatBrower { get; set; }
 
         /// <summary>
         /// 微信公众号AppId
